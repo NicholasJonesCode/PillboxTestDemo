@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
     private EditText rxcuiInput;
     private TextView statusMessage;
     private TextView drugInfoResult;
+    private TextView searchError;
+    private ProgressBar rxcuiQueryLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,8 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
         rxcuiInput = findViewById(R.id.rxcui_input);
         statusMessage = findViewById(R.id.status_message);
         drugInfoResult = findViewById(R.id.drug_info_result);
+        searchError = findViewById(R.id.rxcui_search_error);
+        rxcuiQueryLoadingIndicator = findViewById(R.id.rxcui_query_loading_indicator);
     }
 
     public void executeRxcuiQuery() {
@@ -38,6 +44,13 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
         protected void onPreExecute() {
             //status update
             statusMessage.setText("Status: Making search, please wait...");
+
+            //clear the past results
+            drugInfoResult.setText("");
+
+            //make sure error isnt showing, and show loading icon
+            searchError.setVisibility(View.INVISIBLE);
+            rxcuiQueryLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -56,10 +69,14 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result != null && !result.equals("")) {
+            //status update
+            statusMessage.setText("Status: Finished!");
+            rxcuiQueryLoadingIndicator.setVisibility(View.INVISIBLE);
+
+            if (result != null && !result.equals("") && rxcuiInput == null) {
                 drugInfoResult.setText(result);
-                //status update
-                statusMessage.setText("Status: Finished!");
+            } else {
+                searchError.setVisibility(View.VISIBLE);
             }
         }
     }
