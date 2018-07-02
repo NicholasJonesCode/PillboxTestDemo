@@ -73,7 +73,7 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
             statusMessage.setText("Status: Finished!");
             rxcuiQueryLoadingIndicator.setVisibility(View.INVISIBLE);
 
-            if (result != null && !result.equals("") && rxcuiInput == null) {
+            if (result != null && !result.equals("") && rxcuiInput != null) {
                 drugInfoResult.setText(result);
             } else {
                 searchError.setVisibility(View.VISIBLE);
