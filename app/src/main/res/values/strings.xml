@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pillbox Test Demo</string>
-    <string name="rxcui_search_error">An error occurred. Check your internet connection, or make sure you have entered proper data.</string>
+    <string name="search_error">An error occurred. Check your internet connection, or make sure you have entered proper data.</string>
+    <string name="search_hint">Type in a Keyword</string>
 </resources>

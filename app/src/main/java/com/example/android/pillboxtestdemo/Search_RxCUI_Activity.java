@@ -10,57 +10,84 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 public class Search_RxCUI_Activity extends AppCompatActivity {
 
-    private EditText rxcuiInput;
+    //change this to keyword
+    private EditText keywordInput;
     private TextView statusMessage;
     private TextView drugInfoResult;
     private TextView searchError;
-    private ProgressBar rxcuiQueryLoadingIndicator;
+    private ProgressBar searchQueryLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search__rxcui);
 
-        rxcuiInput = findViewById(R.id.rxcui_input);
+        keywordInput = findViewById(R.id.keyword_input);
         statusMessage = findViewById(R.id.status_message);
         drugInfoResult = findViewById(R.id.drug_info_result);
-        searchError = findViewById(R.id.rxcui_search_error);
-        rxcuiQueryLoadingIndicator = findViewById(R.id.rxcui_query_loading_indicator);
+        searchError = findViewById(R.id.search_error);
+        searchQueryLoadingIndicator = findViewById(R.id.rxcui_query_loading_indicator);
     }
 
     public void executeRxcuiQuery() {
 
-        new RxcuiQuery().execute(rxcuiInput.getText().toString());
+        new RxcuiQuery().execute(keywordInput.getText().toString());
     }
+
+    public void onMakeSearchVisibilities() {
+
+        //status update
+        statusMessage.setText("Status: Making search, please wait...");
+
+        //clear the past results
+        drugInfoResult.setText("");
+
+        //make sure error isnt showing, and show loading icon
+        searchError.setVisibility(View.INVISIBLE);
+        searchQueryLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void afterSearchVisibilities() {
+
+        //status update
+        statusMessage.setText("Status: Finished!");
+        searchQueryLoadingIndicator.setVisibility(View.INVISIBLE);
+    }
+
+    public void showSearchError(String errorMessage) {
+        searchError.setText(errorMessage);
+        searchError.setVisibility(View.VISIBLE);
+    }
+
 
 
     public class RxcuiQuery extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
-            //status update
-            statusMessage.setText("Status: Making search, please wait...");
 
-            //clear the past results
-            drugInfoResult.setText("");
-
-            //make sure error isnt showing, and show loading icon
-            searchError.setVisibility(View.INVISIBLE);
-            rxcuiQueryLoadingIndicator.setVisibility(View.VISIBLE);
+            onMakeSearchVisibilities();
         }
 
         @Override
         protected String doInBackground(String... strings) {
-            String rxcui = strings[0];
+            String keyword = strings[0];
 
             String result = null;
             try {
-                result = Utils.getDrugInfoResult(rxcui);
+
+                String rxcui = Utils.getRxcuiByKeyword(keyword.trim()); //remove whitespace
+                result = Utils.getDrugInfoResultByRxcui(rxcui);
+
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -69,14 +96,19 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            //status update
-            statusMessage.setText("Status: Finished!");
-            rxcuiQueryLoadingIndicator.setVisibility(View.INVISIBLE);
 
-            if (result != null && !result.equals("") && rxcuiInput != null) {
-                drugInfoResult.setText(result);
+            afterSearchVisibilities();
+
+            if (result != null && !result.equals("") && keywordInput != null) {
+
+                try {
+                    drugInfoResult.setText(Utils.sortJsonData(result));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    showSearchError("Error in sorting data: \n\n" + e.getMessage()); //placeholder message for now
+                }
             } else {
-                searchError.setVisibility(View.VISIBLE);
+                showSearchError(getString(R.string.search_error));
             }
         }
     }

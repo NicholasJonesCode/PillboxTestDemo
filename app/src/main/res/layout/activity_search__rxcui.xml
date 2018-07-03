@@ -7,11 +7,11 @@
     tools:context=".Search_RxCUI_Activity">
 
     <EditText
-        android:id="@+id/rxcui_input"
+        android:id="@+id/keyword_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:hint="Type RxCUI Number"
+        android:hint="@string/search_hint"
         android:background="#ffade5"
         android:textSize="24sp"/>
 
@@ -34,22 +34,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- RESULT -->
             <TextView
                 android:id="@+id/drug_info_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"/>
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                android:autoLink="web"/>
 
         </ScrollView>
 
         <TextView
-            android:id="@+id/rxcui_search_error"
+            android:id="@+id/search_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            android:text="@string/rxcui_search_error"
             android:textSize="18sp"
             android:padding="8dp"
             android:textColor="@android:color/holo_red_dark"/>
