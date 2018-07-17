@@ -16,6 +16,8 @@ import java.io.IOException;
 
 public class Search_RxCUI_Activity extends AppCompatActivity {
 
+    static final String PAST_RESULTS = "pastResults";
+
     //change this to keyword
     private EditText keywordInput;
     private TextView statusMessage;
@@ -33,6 +35,20 @@ public class Search_RxCUI_Activity extends AppCompatActivity {
         drugInfoResult = findViewById(R.id.drug_info_result);
         searchError = findViewById(R.id.search_error);
         searchQueryLoadingIndicator = findViewById(R.id.rxcui_query_loading_indicator);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(PAST_RESULTS, drugInfoResult.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        drugInfoResult.setText(savedInstanceState.getString(PAST_RESULTS));
     }
 
     public void executeRxcuiQuery() {
